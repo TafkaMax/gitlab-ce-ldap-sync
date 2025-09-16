@@ -338,6 +338,16 @@ groupNamesOfExternal:
 
 Default: *null*
 
+###### rootGroupName *(string|null)*
+
+Specify a rootGroupName under where ldap groups are synced as subgroups.
+
+```yaml
+rootGroupName: ldap
+```
+
+Default: *null*
+
 #### instances *(array)*
 
 Declare one or more Gitlab instances to sync with. Each array key represents the instance name, which can be used later on to only sync with a particular instance (out of multiple) when running this tool.
