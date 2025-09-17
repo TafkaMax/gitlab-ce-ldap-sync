@@ -1625,7 +1625,7 @@ class LdapSyncCommand extends Command
             $this->logger?->notice(sprintf("Ldap Root Group variable has been set, searching if group is present. \"%s\"", $ldapRootGroup));
             $gitlabGroupSearchResult = $gitlab->groups()->all(["top_level_only" => true, "search" => $ldapRootGroup]);
             $this->gitlabApiCoolDown();
-            if (count($gitlabGroupSearchResult) <== 0 ) {
+            if (count($gitlabGroupSearchResult) <= 0 ) {
                 $this->logger?->notice(sprintf("Ldap Root Group variable has been set, but is not yet created, creating a group called \"%s\"", $ldapRootGroup));
                 $gitlabGroupName = $slugifyGitlabName->slugify($ldapRootGroup);
                 $gitlabGroupPath = $slugifyGitlabPath->slugify($ldapRootGroup);
