@@ -1630,7 +1630,7 @@ class LdapSyncCommand extends Command
             !$this->dryRun ? ($gitlabGroup = $gitlab->groups()->create($gitlabGroupName, $gitlabGroupPath)) : $this->logger?->warning("Operation skipped due to dry run.");
             $gitlabGroupId = (is_array($gitlabGroup) && isset($gitlabGroup["id"]) && is_int($gitlabGroup["id"])) ? $gitlabGroup["id"] : sprintf("dry:%s", $gitlabGroupPath);
             $groupsSync["new"][$gitlabGroupId] = $gitlabGroupName;
-            $rootGroupid = $gitlabGroupId;
+            $ldapRootGroupId = $gitlabGroupId;
 
             $this->gitlabApiCoolDown();
         }
