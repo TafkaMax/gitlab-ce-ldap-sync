@@ -1622,17 +1622,20 @@ class LdapSyncCommand extends Command
 
         // Create ldapRootGroup group if variable is set.
         if (isset($ldapRootGroup)) {
-            $this->logger?->info(sprintf("Ldap Root Group variable has been set, creating a group called \"%s\"", $ldapRootGroup));
-
-            $gitlabGroupName = $slugifyGitlabName->slugify($ldapRootGroup);
-            $gitlabGroupPath = $slugifyGitlabPath->slugify($ldapRootGroup);
-            $gitlabGroup = null;
-            !$this->dryRun ? ($gitlabGroup = $gitlab->groups()->create($gitlabGroupName, $gitlabGroupPath)) : $this->logger?->warning("Operation skipped due to dry run.");
-            $gitlabGroupId = (is_array($gitlabGroup) && isset($gitlabGroup["id"]) && is_int($gitlabGroup["id"])) ? $gitlabGroup["id"] : sprintf("dry:%s", $gitlabGroupPath);
-            $groupsSync["new"][$gitlabGroupId] = $gitlabGroupName;
-            $ldapRootGroupId = $gitlabGroupId;
-
+            $this->logger?->notice(sprintf("Ldap Root Group variable has been set, searching if group is present. \"%s\"", $ldapRootGroup));
+            $gitlabGroupSearchResult = $gitlab->groups()->all(["top_level_only" => true, "search" => $ldapRootGroup]);
             $this->gitlabApiCoolDown();
+            if (count($gitlabGroupSearchResult) <== 0 ) {
+                $this->logger?->notice(sprintf("Ldap Root Group variable has been set, but is not yet created, creating a group called \"%s\"", $ldapRootGroup));
+                $gitlabGroupName = $slugifyGitlabName->slugify($ldapRootGroup);
+                $gitlabGroupPath = $slugifyGitlabPath->slugify($ldapRootGroup);
+                $gitlabGroup = null;
+                !$this->dryRun ? ($gitlabGroup = $gitlab->groups()->create($gitlabGroupName, $gitlabGroupPath)) : $this->logger?->warning("Operation skipped due to dry run.");
+                $gitlabGroupId = (is_array($gitlabGroup) && isset($gitlabGroup["id"]) && is_int($gitlabGroup["id"])) ? $gitlabGroup["id"] : sprintf("dry:%s", $gitlabGroupPath);
+                $groupsSync["new"][$gitlabGroupId] = $gitlabGroupName;
+                $ldapRootGroupId = $gitlabGroupId;
+                $this->gitlabApiCoolDown();
+            }
         }
 
         // If ldapRootGroup is set then we need to query the subgroups of the rootGroup
