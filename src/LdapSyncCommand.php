@@ -1640,9 +1640,11 @@ class LdapSyncCommand extends Command
             // Fetch ldapRootGroupId if it is not set.
             if (!isset($ldapRootGroupId) || $this->dryRun) {
                 $this->logger?->info(sprintf("Ldap Root Group variable has been set, but the ID of the group is null, searching for the ID of the group \"%s\"", $ldapRootGroup));
-                $this->logger?->info($gitlab->groups()->all(["top_level_only" => true, "search" => $ldapRootGroup]));
+                $debugdata = $gitlab->groups()->all(["top_level_only" => true, "search" => $ldapRootGroup]);
+                $this->logger?->info(sprintf("Data: %s", $debugdata));
 
                 $ldapRootGroupId = $gitlab->groups()->all(["top_level_only" => true, "search" => $ldapRootGroup]);
+                $this->gitlabApiCoolDown();
             }
             // Get the subgroups of the rootGroup
             while (is_array($gitlabGroups = $gitlab->groups()->subgroups($ldapRootGroupId, ["page" => ++$p, "per_page" => 100, "all_available" => true])) && [] !== $gitlabGroups) {
