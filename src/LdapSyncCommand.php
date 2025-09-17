@@ -1786,7 +1786,7 @@ class LdapSyncCommand extends Command
             if (empty($rootGroupName)) {
                 !$this->dryRun ? ($gitlabGroup = $gitlab->groups()->create($gitlabGroupName, $gitlabGroupPath)) : $this->logger?->warning("Operation skipped due to dry run.");
             } else {
-                !$this->dryRun ? ($gitlabGroup = $gitlab->groups()->create($gitlabGroupName, $gitlabGroupPath, "parent_id" = $rootGroupId)) : $this->logger?->warning("Operation skipped due to dry run.");
+                !$this->dryRun ? ($gitlabGroup = $gitlab->groups()->create($gitlabGroupName, $gitlabGroupPath, "parent_id" => $rootGroupId)) : $this->logger?->warning("Operation skipped due to dry run.");
             }
 
             $gitlabGroupId = (is_array($gitlabGroup) && isset($gitlabGroup["id"]) && is_int($gitlabGroup["id"])) ? $gitlabGroup["id"] : sprintf("dry:%s", $gitlabGroupPath);
