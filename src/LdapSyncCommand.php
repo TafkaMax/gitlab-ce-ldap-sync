@@ -1647,7 +1647,7 @@ class LdapSyncCommand extends Command
                 } else {
                     $this->logger?->error("Ldap Root Group is not present yet. Aborting sync");
                 }
-                $this->logger?->info(sprintf("Ldatp Root Group id is: \"%s"", $ldapRootGroupId));
+                $this->logger?->info(sprintf("Ldap Root Group id is: \"%s\"", $ldapRootGroupId));
 
                 $this->gitlabApiCoolDown();
             }
