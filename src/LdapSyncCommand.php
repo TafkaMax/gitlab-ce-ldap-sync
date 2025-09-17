@@ -1614,7 +1614,7 @@ class LdapSyncCommand extends Command
             "updateNum" => 0,
         ];
         // Get ldapRootGroup variable from config into an inbetween variable for ease of use.
-        $ldapRootGroup = config["gitlab"]["options"]["ldapRootGroup"];
+        $ldapRootGroup = $config["gitlab"]["options"]["ldapRootGroup"];
         $ldapRootGroupId = null;
         // Find all existing Gitlab groups
         $this->logger?->notice("Finding all existing Gitlab groups...");
