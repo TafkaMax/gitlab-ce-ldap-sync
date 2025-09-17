@@ -1622,7 +1622,7 @@ class LdapSyncCommand extends Command
 
         // Create ldapRootGroup group if variable is set.
         if (!empty($ldapRootGroup)) {
-            $this->logger?->info(sprintf("Root Group Name variable has been set, creating a group called \"%s\"", $ldapRootGroup));
+            $this->logger?->info(sprintf("Ldap Root Group variable has been set, creating a group called \"%s\"", $ldapRootGroup));
 
             $gitlabGroupName = $slugifyGitlabName->slugify($ldapRootGroup);
             $gitlabGroupPath = $slugifyGitlabPath->slugify($ldapRootGroup);
@@ -1639,7 +1639,8 @@ class LdapSyncCommand extends Command
         if (!empty($ldapRootGroup)) {
             // Fetch ldapRootGroupId if it is not set.
             if (empty($ldapRootGroupId)) {
-                $this->logger?->debug($gitlab->groups()->all(["top_level_only" => true, "search" => $ldapRootGroup]));
+                $this->logger?->info(sprintf("Ldap Root Group variable has been set, but the ID of the group is null, searching for the ID of the group \"%s\"", $ldapRootGroup));
+                $this->logger?->info($gitlab->groups()->all(["top_level_only" => true, "search" => $ldapRootGroup]));
 
                 $ldapRootGroupId = $gitlab->groups()->all(["top_level_only" => true, "search" => $ldapRootGroup]);
             }
