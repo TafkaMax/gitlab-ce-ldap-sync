@@ -1639,7 +1639,9 @@ class LdapSyncCommand extends Command
         if (!empty($ldapRootGroup)) {
             // Fetch ldapRootGroupId if it is not set.
             if (empty($ldapRootGroupId)) {
-                $ldapRootGroupId = $gitlab->groups()->show($ldapRootGroup);
+                $this->logger?->debug($gitlab->groups()->all(["top_level_only" => true, "search" => $ldapRootGroup]);)
+
+                $ldapRootGroupId = $gitlab->groups()->all(["top_level_only" => true, "search" => $ldapRootGroup]);
             }
             // Get the subgroups of the rootGroup
             while (is_array($gitlabGroups = $gitlab->groups()->subgroups($ldapRootGroupId, ["page" => ++$p, "per_page" => 100, "all_available" => true])) && [] !== $gitlabGroups) {
