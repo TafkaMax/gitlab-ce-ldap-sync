@@ -1642,7 +1642,8 @@ class LdapSyncCommand extends Command
                 $this->logger?->info(sprintf("Ldap Root Group variable has been set, but the ID of the group is null, searching for the ID of the group \"%s\"", $ldapRootGroup));
                 $debugdata = $gitlab->groups()->all(["top_level_only" => true, "search" => $ldapRootGroup]);
                 foreach ($debugdata as $i => $debug) {
-                    $this->logger?->info(sprintf("Data: %s", $debug));
+                    $this->logger?->info(sprintf("Key: %s", $i));
+                    $this->logger?->info(sprintf("Data: %s", implode(', ',$debug)));
                 }
 
                 $ldapRootGroupId = $gitlab->groups()->all(["top_level_only" => true, "search" => $ldapRootGroup]);
