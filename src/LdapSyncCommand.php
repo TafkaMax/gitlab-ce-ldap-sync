@@ -1786,7 +1786,12 @@ class LdapSyncCommand extends Command
             if (empty($rootGroupName)) {
                 !$this->dryRun ? ($gitlabGroup = $gitlab->groups()->create($gitlabGroupName, $gitlabGroupPath)) : $this->logger?->warning("Operation skipped due to dry run.");
             } else {
-                !$this->dryRun ? ($gitlabGroup = $gitlab->groups()->create($gitlabGroupName, $gitlabGroupPath, "parent_id" => $rootGroupId)) : $this->logger?->warning("Operation skipped due to dry run.");
+                // Fetch rootGroupId if it is not set.
+                if (empty($rootGroupId)) {
+                    $rootGroupId = $gitlab->groups()->show($rootGroupName);
+                }
+                // TODO https://github.com/GitLabPHP/Client/blob/12.0/src/Api/Groups.php#L75 I don't want to add all of the other default options. I want to do something like this. create($gitlabGroupName, $gitlabGroupPath, "parent_id" = $rootGroupId) ,but with the current code this doesn't work and I have to add all of the previous arguments aswell as defaults.
+                !$this->dryRun ? ($gitlabGroup = $gitlab->groups()->create($gitlabGroupName, $gitlabGroupPath, null, "private", null, null, $rootGroupId)) : $this->logger?->warning("Operation skipped due to dry run.");
             }
 
             $gitlabGroupId = (is_array($gitlabGroup) && isset($gitlabGroup["id"]) && is_int($gitlabGroup["id"])) ? $gitlabGroup["id"] : sprintf("dry:%s", $gitlabGroupPath);
