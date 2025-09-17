@@ -43,7 +43,7 @@ gitlab:
         groupNamesOfAdministrators:     []
         groupNamesOfExternal:           []
 
-        rootGroupName:                  null
+        ldapRootGroup:                  null
 
     instances:
         example:

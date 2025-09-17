@@ -338,12 +338,12 @@ groupNamesOfExternal:
 
 Default: *null*
 
-###### rootGroupName *(string|null)*
+###### ldapRootGroup *(string|null)*
 
-Specify a rootGroupName under where ldap groups are synced as subgroups.
+Specify a Gitlab ldapRootGroup under where ldap groups are synced as subgroups.
 
 ```yaml
-rootGroupName: ldap
+ldapRootGroup: ldap
 ```
 
 Default: *null*

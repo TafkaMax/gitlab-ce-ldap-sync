@@ -1613,19 +1613,19 @@ class LdapSyncCommand extends Command
             "update"    => [],  // Groups in both LDAP and Gitlab
             "updateNum" => 0,
         ];
-        // Get rootGroupName variable from config into an inbetween variable for ease of use.
-        $rootGroupName = config["gitlab"]["options"]["rootGroupName"];
-        $rootGroupId = null;
+        // Get ldapRootGroup variable from config into an inbetween variable for ease of use.
+        $ldapRootGroup = config["gitlab"]["options"]["ldapRootGroup"];
+        $ldapRootGroupId = null;
         // Find all existing Gitlab groups
         $this->logger?->notice("Finding all existing Gitlab groups...");
         $p = 0;
 
-        // Create rootGroupName group if variable is set.
-        if (!empty(rootGroupName)) {
-            $this->logger?->info(sprintf("Root Group Name variable has been set, creating a group called \"%s\"", $rootGroupName));
+        // Create ldapRootGroup group if variable is set.
+        if (!empty(ldapRootGroup)) {
+            $this->logger?->info(sprintf("Root Group Name variable has been set, creating a group called \"%s\"", $ldapRootGroup));
 
-            $gitlabGroupName = $slugifyGitlabName->slugify($rootGroupName);
-            $gitlabGroupPath = $slugifyGitlabPath->slugify($rootGroupName);
+            $gitlabGroupName = $slugifyGitlabName->slugify($ldapRootGroup);
+            $gitlabGroupPath = $slugifyGitlabPath->slugify($ldapRootGroup);
             $gitlabGroup = null;
             !$this->dryRun ? ($gitlabGroup = $gitlab->groups()->create($gitlabGroupName, $gitlabGroupPath)) : $this->logger?->warning("Operation skipped due to dry run.");
             $gitlabGroupId = (is_array($gitlabGroup) && isset($gitlabGroup["id"]) && is_int($gitlabGroup["id"])) ? $gitlabGroup["id"] : sprintf("dry:%s", $gitlabGroupPath);
@@ -1635,14 +1635,14 @@ class LdapSyncCommand extends Command
             $this->gitlabApiCoolDown();
         }
 
-        // If rootGroupName is set then we need to query the subgroups of the rootGroup
-        if (!empty($rootGroupName)) {
-            // Fetch rootGroupId if it is not set.
-            if (empty($rootGroupId)) {
-                $rootGroupId = $gitlab->groups()->show($rootGroupName);
+        // If ldapRootGroup is set then we need to query the subgroups of the rootGroup
+        if (!empty($ldapRootGroup)) {
+            // Fetch ldapRootGroupId if it is not set.
+            if (empty($ldapRootGroupId)) {
+                $ldapRootGroupId = $gitlab->groups()->show($ldapRootGroup);
             }
             // Get the subgroups of the rootGroup
-            while (is_array($gitlabGroups = $gitlab->groups()->subgroups($rootGroupId, ["page" => ++$p, "per_page" => 100, "all_available" => true])) && [] !== $gitlabGroups) {
+            while (is_array($gitlabGroups = $gitlab->groups()->subgroups($ldapRootGroupId, ["page" => ++$p, "per_page" => 100, "all_available" => true])) && [] !== $gitlabGroups) {
                 /** @var array<int, GitlabGroupArray> $gitlabGroups */
                 foreach ($gitlabGroups as $i => $gitlabGroup) {
                     $n = $i + 1;
@@ -1783,15 +1783,15 @@ class LdapSyncCommand extends Command
             $gitlabGroup = null;
 
             /** @var GitlabGroupArray|null $gitlabUser */
-            if (empty($rootGroupName)) {
+            if (empty($ldapRootGroup)) {
                 !$this->dryRun ? ($gitlabGroup = $gitlab->groups()->create($gitlabGroupName, $gitlabGroupPath)) : $this->logger?->warning("Operation skipped due to dry run.");
             } else {
-                // Fetch rootGroupId if it is not set.
-                if (empty($rootGroupId)) {
-                    $rootGroupId = $gitlab->groups()->show($rootGroupName);
+                // Fetch ldapRootGroupId if it is not set.
+                if (empty($ldapRootGroupId)) {
+                    $ldapRootGroupId = $gitlab->groups()->show($ldapRootGroup);
                 }
-                // TODO https://github.com/GitLabPHP/Client/blob/12.0/src/Api/Groups.php#L75 I don't want to add all of the other default options. I want to do something like this. create($gitlabGroupName, $gitlabGroupPath, "parent_id" = $rootGroupId) ,but with the current code this doesn't work and I have to add all of the previous arguments aswell as defaults.
-                !$this->dryRun ? ($gitlabGroup = $gitlab->groups()->create($gitlabGroupName, $gitlabGroupPath, null, "private", null, null, $rootGroupId)) : $this->logger?->warning("Operation skipped due to dry run.");
+                // TODO https://github.com/GitLabPHP/Client/blob/12.0/src/Api/Groups.php#L75 I don't want to add all of the other default options. I want to do something like this. create($gitlabGroupName, $gitlabGroupPath, "parent_id" = $ldapRootGroupId) ,but with the current code this doesn't work and I have to add all of the previous arguments aswell as defaults.
+                !$this->dryRun ? ($gitlabGroup = $gitlab->groups()->create($gitlabGroupName, $gitlabGroupPath, null, "private", null, null, $ldapRootGroupId)) : $this->logger?->warning("Operation skipped due to dry run.");
             }
 
             $gitlabGroupId = (is_array($gitlabGroup) && isset($gitlabGroup["id"]) && is_int($gitlabGroup["id"])) ? $gitlabGroup["id"] : sprintf("dry:%s", $gitlabGroupPath);
