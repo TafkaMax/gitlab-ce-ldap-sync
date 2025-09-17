@@ -1621,7 +1621,7 @@ class LdapSyncCommand extends Command
         $p = 0;
 
         // Create ldapRootGroup group if variable is set.
-        if (!empty(ldapRootGroup)) {
+        if (!empty($ldapRootGroup)) {
             $this->logger?->info(sprintf("Root Group Name variable has been set, creating a group called \"%s\"", $ldapRootGroup));
 
             $gitlabGroupName = $slugifyGitlabName->slugify($ldapRootGroup);
