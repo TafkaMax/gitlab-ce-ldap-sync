@@ -812,6 +812,7 @@ class LdapSyncCommand extends Command
                     $addProblem("warning", "gitlab->options->ldapRootGroup missing. (Assuming null.)");
                     $config["gitlab"]["options"]["ldapRootGroup"] = null;
                 }
+            }
             // >> Gitlab options
 
             // << Gitlab instances
