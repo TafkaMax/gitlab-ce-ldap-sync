@@ -1621,7 +1621,7 @@ class LdapSyncCommand extends Command
         $p = 0;
 
         // Create ldapRootGroup group if variable is set.
-        if (!empty($ldapRootGroup)) {
+        if (isset($ldapRootGroup)) {
             $this->logger?->info(sprintf("Ldap Root Group variable has been set, creating a group called \"%s\"", $ldapRootGroup));
 
             $gitlabGroupName = $slugifyGitlabName->slugify($ldapRootGroup);
@@ -1636,9 +1636,9 @@ class LdapSyncCommand extends Command
         }
 
         // If ldapRootGroup is set then we need to query the subgroups of the rootGroup
-        if (!empty($ldapRootGroup)) {
+        if (isset($ldapRootGroup)) {
             // Fetch ldapRootGroupId if it is not set.
-            if (empty($ldapRootGroupId)) {
+            if (!isset($ldapRootGroupId)) {
                 $this->logger?->info(sprintf("Ldap Root Group variable has been set, but the ID of the group is null, searching for the ID of the group \"%s\"", $ldapRootGroup));
                 $this->logger?->info($gitlab->groups()->all(["top_level_only" => true, "search" => $ldapRootGroup]));
 
@@ -1786,11 +1786,11 @@ class LdapSyncCommand extends Command
             $gitlabGroup = null;
 
             /** @var GitlabGroupArray|null $gitlabUser */
-            if (empty($ldapRootGroup)) {
+            if (!isset($ldapRootGroup)) {
                 !$this->dryRun ? ($gitlabGroup = $gitlab->groups()->create($gitlabGroupName, $gitlabGroupPath)) : $this->logger?->warning("Operation skipped due to dry run.");
             } else {
                 // Fetch ldapRootGroupId if it is not set.
-                if (empty($ldapRootGroupId)) {
+                if (!isset($ldapRootGroupId)) {
                     $ldapRootGroupId = $gitlab->groups()->show($ldapRootGroup);
                 }
                 // TODO https://github.com/GitLabPHP/Client/blob/12.0/src/Api/Groups.php#L75 I don't want to add all of the other default options. I want to do something like this. create($gitlabGroupName, $gitlabGroupPath, "parent_id" = $ldapRootGroupId) ,but with the current code this doesn't work and I have to add all of the previous arguments aswell as defaults.
