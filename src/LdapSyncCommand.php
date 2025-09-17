@@ -1636,7 +1636,7 @@ class LdapSyncCommand extends Command
         }
 
         // If rootGroupName is set then we need to query the subgroups of the rootGroup
-        if (!empty($rootGroupName) {
+        if (!empty($rootGroupName)) {
             // Fetch rootGroupId if it is not set.
             if (empty($rootGroupId)) {
                 $rootGroupId = $gitlab->groups()->show($rootGroupName);
