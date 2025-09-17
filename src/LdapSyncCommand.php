@@ -1612,7 +1612,6 @@ class LdapSyncCommand extends Command
             "update"    => [],  // Groups in both LDAP and Gitlab
             "updateNum" => 0,
         ];
-        
         // Get rootGroupName variable from config into an inbetween variable for ease of use.
         $rootGroupName = config["gitlab"]["options"]["rootGroupName"];
         $rootGroupId = null;
@@ -1630,7 +1629,7 @@ class LdapSyncCommand extends Command
             !$this->dryRun ? ($gitlabGroup = $gitlab->groups()->create($gitlabGroupName, $gitlabGroupPath)) : $this->logger?->warning("Operation skipped due to dry run.");
             $gitlabGroupId = (is_array($gitlabGroup) && isset($gitlabGroup["id"]) && is_int($gitlabGroup["id"])) ? $gitlabGroup["id"] : sprintf("dry:%s", $gitlabGroupPath);
             $groupsSync["new"][$gitlabGroupId] = $gitlabGroupName;
-            $rootGroupid = $gitlabGroupId
+            $rootGroupid = $gitlabGroupId;
 
             $this->gitlabApiCoolDown();
         }
@@ -1639,7 +1638,7 @@ class LdapSyncCommand extends Command
         if (!empty($rootGroupName) {
             // Fetch rootGroupId if it is not set.
             if (empty($rootGroupId)) {
-                $rootGroupId = $gitlab->groups()->show($rootGroupName)
+                $rootGroupId = $gitlab->groups()->show($rootGroupName);
             }
             // Get the subgroups of the rootGroup
             while (is_array($gitlabGroups = $gitlab->groups()->subgroups($rootGroupId, ["page" => ++$p, "per_page" => 100, "all_available" => true])) && [] !== $gitlabGroups) {
