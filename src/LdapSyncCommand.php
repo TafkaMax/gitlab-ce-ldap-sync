@@ -174,13 +174,13 @@ class LdapSyncCommand extends Command
      */
 
     /** @var string User's configuration file name. */
-    const CONFIG_FILE_NAME = "config.yml";
+    public const CONFIG_FILE_NAME = "config.yml";
 
     /** @var string Distributed configuration file name. */
-    const CONFIG_FILE_DIST_NAME = "config.yml.dist";
+    public const CONFIG_FILE_DIST_NAME = "config.yml.dist";
 
-    /** @var int Wait this long (in microseconds) between Gitlab API calls to avoid flooding. */
-    const API_COOL_DOWN_USECONDS = 100000;
+    /** @var non-negative-int Wait this long (in microseconds) between Gitlab API calls to avoid flooding. */
+    public const API_COOL_DOWN_USECONDS = 100000;
 
 
 
@@ -271,6 +271,7 @@ class LdapSyncCommand extends Command
             "ldap_search",
             "ldap_get_entries",
         ] as $ldapFunction) {
+            // @phpstan-ignore function.alreadyNarrowedType
             if (!function_exists($ldapFunction)) {
                 $this->logger->critical(sprintf("PHP-LDAP function \"%s\" does not exist.", $ldapFunction));
                 return Command::FAILURE;
@@ -1359,7 +1360,7 @@ class LdapSyncCommand extends Command
         $this->logger?->notice("Finding all existing Gitlab users...");
         $p = 0;
 
-        while (is_array($gitlabUsers = $gitlab->users()->all(["page" => ++$p, "per_page" => 100])) && [] !== $gitlabUsers) {
+        while (is_array($gitlabUsers = $gitlab->users()->all(["page" => ++$p, "per_page" => 100, "without_project_bots" => true])) && [] !== $gitlabUsers) {
             /** @var array<int, GitlabUserArray> $gitlabUsers */
             foreach ($gitlabUsers as $i => $gitlabUser) {
                 $n = $i + 1;
