@@ -1926,9 +1926,7 @@ class LdapSyncCommand extends Command
 
             $groupsSync["update"][$gitlabGroupId] = $gitlabGroupName;
 
-            /* Not required until group updates can be detected as per above.
             $this->gitlabApiCoolDown();
-             */
         }
 
         asort($groupsSync["update"]);
