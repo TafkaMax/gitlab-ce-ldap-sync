@@ -1912,7 +1912,7 @@ class LdapSyncCommand extends Command
 
             !$this->dryRun ? ($gitlabGroup = $gitlab->groups()->update($gitlabGroupId, [
               "project_creation_level" => $config["gitlab"]["options"]["projectCreationLevel"]
-            ])) : $this->logger->warning("Operation skipped due to dry run.")
+            ])) : $this->logger->warning("Operation skipped due to dry run.");
 
             /** @var GitlabGroupArray|null $gitlabUser */
             /*
