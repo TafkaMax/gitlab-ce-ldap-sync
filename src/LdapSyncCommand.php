@@ -1911,7 +1911,7 @@ class LdapSyncCommand extends Command
             $ldapGroupMembers = $ldapGroupsSafe[$gitlabGroupName];
 
             !$this->dryRun ? ($gitlabGroup = $gitlab->groups()->update($gitlabGroupId, [
-              "project_creation_level" => $config["gitlab"]["options"]["groupNamesToIgnore"]
+              "project_creation_level" => $config["gitlab"]["options"]["projectCreationLevel"]
             ])) : $this->logger->warning("Operation skipped due to dry run.")
 
             /** @var GitlabGroupArray|null $gitlabUser */
