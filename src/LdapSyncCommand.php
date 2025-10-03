@@ -813,6 +813,10 @@ class LdapSyncCommand extends Command
                     $addProblem("warning", "gitlab->options->ldapRootGroup missing. (Assuming null.)");
                     $config["gitlab"]["options"]["ldapRootGroup"] = null;
                 }
+                if (!isset($config["gitlab"]["options"]["projectCreationLevel"])) {
+                    $addProblem("warning", "gitlab->options->projectCreationLevel missing. (Assuming 'developer')");
+                    $config["gitlab"]["options"]["projectCreationLevel"] = 'developer';
+                }
             }
             // >> Gitlab options
 
@@ -1699,7 +1703,7 @@ class LdapSyncCommand extends Command
                     }
 
                     $groupsSync["found"][$gitlabGroupId] = $gitlabGroupName;
-                
+
                 }
             }
         } else {
@@ -1759,7 +1763,7 @@ class LdapSyncCommand extends Command
                 }
             }
         }
-        
+
         asort($groupsSync["found"]);
         $this->logger?->notice(sprintf("%d Gitlab group(s) found.", $groupsSync["foundNum"] = count($groupsSync["found"])));
 
@@ -1905,6 +1909,10 @@ class LdapSyncCommand extends Command
                 continue;
             }
             $ldapGroupMembers = $ldapGroupsSafe[$gitlabGroupName];
+
+            !$this->dryRun ? ($gitlabGroup = $gitlab->groups()->update($gitlabGroupId, [
+              "project_creation_level" => $config["gitlab"]["options"]["groupNamesToIgnore"]
+            ])) : $this->logger->warning("Operation skipped due to dry run.")
 
             /** @var GitlabGroupArray|null $gitlabUser */
             /*

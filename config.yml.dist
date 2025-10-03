@@ -44,6 +44,7 @@ gitlab:
         groupNamesOfExternal:           []
 
         ldapRootGroup:                  null
+        projectCreationLevel:           "developer"
 
     instances:
         example:
