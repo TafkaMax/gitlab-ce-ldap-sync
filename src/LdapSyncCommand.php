@@ -241,9 +241,9 @@ class LdapSyncCommand extends Command
      * @param InputInterface  $input  Input interface
      * @param OutputInterface $output Output interface
      *
-     * @return int|null Error code, or null/zero for success
+     * @return int Error code, or zero for success
      */
-    public function execute(InputInterface $input, OutputInterface $output): ?int
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->output = $output;
         $this->logger = new ConsoleLogger($output);
@@ -1307,7 +1307,7 @@ class LdapSyncCommand extends Command
 
         $slugifyGitlabName = new Slugify([
             "regexp"        => "/([^A-Za-z0-9_\.\(\)\- ])+/",
-            "separator"     => " ",
+            "separator"     => "",
             "lowercase"     => false,
             "trim"          => true,
         ]);
@@ -1364,7 +1364,16 @@ class LdapSyncCommand extends Command
         $this->logger?->notice("Finding all existing Gitlab users...");
         $p = 0;
 
-        while (is_array($gitlabUsers = $gitlab->users()->all(["page" => ++$p, "per_page" => 100, "without_project_bots" => true])) && [] !== $gitlabUsers) {
+        while (is_array($gitlabUsers = $gitlab->users()->all([
+            "page"                  => ++$p,
+            "per_page"              => 100,
+            /* Option not yet supported in the PHP GitLab API client component:
+            "without_project_bots"  => true,
+             * See:
+             * - https://github.com/Adambean/gitlab-ce-ldap-sync/issues/50
+             * - https://github.com/GitLabPHP/Client/issues/810
+             */
+        ])) && [] !== $gitlabUsers) {
             /** @var array<int, GitlabUserArray> $gitlabUsers */
             foreach ($gitlabUsers as $i => $gitlabUser) {
                 $n = $i + 1;
@@ -1839,7 +1848,7 @@ class LdapSyncCommand extends Command
                 continue;
             }
 
-            if ($this->array_key_exists_i($gitlabGroupName, $ldapGroupsSafe)) {
+            if (!$this->array_key_exists_i($gitlabGroupName, $ldapGroupsSafe)) {
                 continue;
             }
             $ldapGroupMembers = $ldapGroupsSafe[$gitlabGroupName];
