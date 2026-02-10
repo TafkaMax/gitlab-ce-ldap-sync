@@ -1367,6 +1367,7 @@ class LdapSyncCommand extends Command
         while (is_array($gitlabUsers = $gitlab->users()->all([
             "page"                  => ++$p,
             "per_page"              => 100,
+            "without_project_bots"  => true
             /* Option not yet supported in the PHP GitLab API client component:
             "without_project_bots"  => true,
              * See:
@@ -2012,7 +2013,7 @@ class LdapSyncCommand extends Command
             $this->logger?->notice("Finding existing group members...");
             $p = 0;
 
-            while (is_array($gitlabUsers = $gitlab->groups()->members($gitlabGroupId, ["page" => ++$p, "per_page" => 100, "without_project_bots" => true])) && [] !== $gitlabUsers) {
+            while (is_array($gitlabUsers = $gitlab->groups()->members($gitlabGroupId, ["page" => ++$p, "per_page" => 100])) && [] !== $gitlabUsers) {
                 /** @var array<int, GitlabUserArray> $gitlabUsers */
                 foreach ($gitlabUsers as $i => $gitlabUser) {
                     $n = $i + 1;
