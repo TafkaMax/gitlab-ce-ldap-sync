@@ -45,6 +45,7 @@ gitlab:
 
         ldapRootGroup:                  null
         projectCreationLevel:           "developer"
+        gitlabGroupVisibility:          "private"
 
     instances:
         example:
