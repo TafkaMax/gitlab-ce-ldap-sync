@@ -64,7 +64,7 @@ use Cocur\Slugify\Slugify;
  *          groupNamesOfAdministrators: string[],
  *          groupNamesOfExternal: string[],
  *      },
- *      instances: ConfigGitlabArray[],
+ *      instances: array<string, ConfigGitlabArray>,
  *  },
  * }
  *
