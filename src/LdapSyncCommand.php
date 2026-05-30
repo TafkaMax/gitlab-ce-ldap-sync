@@ -1568,14 +1568,8 @@ class LdapSyncCommand extends Command
         $p = 0;
 
         while (is_array($gitLabUsers = $gitLab->users()->all([
-            "page"                  => ++$p,
-            "per_page"              => 100,
-            /* Option not yet supported in the PHP GitLab API client component:
-            "without_project_bots"  => true,
-             * See:
-             * - https://github.com/Adambean/gitlab-ce-ldap-sync/issues/50
-             * - https://github.com/GitLabPHP/Client/issues/810
-             */
+            "page" => ++$p,
+            "per_page" => 100,
         ])) && [] !== $gitLabUsers) {
             /** @var array<int, GitLabUserArray> $gitLabUsers */
             foreach ($gitLabUsers as $i => $gitLabUser) {
