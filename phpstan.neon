@@ -8,4 +8,4 @@ parameters:
         - src
     checkUninitializedProperties: true
     reportUnmatchedIgnoredErrors: true
-    treatPhpDocTypesAsCertain: true
+    treatPhpDocTypesAsCertain: false
