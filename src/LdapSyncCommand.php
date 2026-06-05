@@ -2249,16 +2249,12 @@ class LdapSyncCommand extends Command
             }
             $ldapGroupMembers = $ldapGroupsSafe[$gitLabGroupName];
 
-<<<<<<< HEAD
             !$this->dryRun ? ($gitlabGroup = $gitlab->groups()->update($gitlabGroupId, [
                 "project_creation_level" => $config["gitlab"]["options"]["projectCreationLevel"],
                 "visibility" => $config["gitlab"]["options"]["gitlabGroupVisibility"]
             ])) : $this->logger->warning("Operation skipped due to dry run.");
 
             /** @var GitlabGroupArray|null $gitlabUser */
-=======
-            /** @var GitLabGroupArray|null $gitLabUser */
->>>>>>> master
             /*
             !$this->dryRun ? ($gitLabGroup = $gitLab->groups()->update($gitLabGroupId, [
                 // "name"              => $gitLabGroupName,
@@ -2271,13 +2267,7 @@ class LdapSyncCommand extends Command
 
             $groupsSync["update"][$gitLabGroupId] = $gitLabGroupName;
 
-<<<<<<< HEAD
             $this->gitlabApiCoolDown();
-=======
-            /* Not required until group updates can be detected as per above.
-            $this->gitLabApiCoolDown();
-             */
->>>>>>> master
         }
 
         asort($groupsSync["update"]);
