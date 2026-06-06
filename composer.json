@@ -29,7 +29,7 @@
     },
     "autoload": {
         "psr-4": {
-            "AdamReece\\GitLabCeLdapGroupSync\\": "src"
+            "AdamReece\\GitLabCeLdapSync\\": "src"
         },
         "classmap": ["src"]
     },
