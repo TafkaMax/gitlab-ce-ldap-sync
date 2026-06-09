@@ -1942,7 +1942,7 @@ class LdapSyncCommand extends Command
                 $this->gitlabApiCoolDown();
             }
             // Get the subgroups of the rootGroup
-            while (is_array($gitLabGroups = $gitlab->groups()->subgroups($ldapRootGroupId, ["page" => ++$p, "per_page" => 100, "all_available" => true])) && [] !== $gitLabGroups) {
+            while (is_array($gitLabGroups = $gitLab->groups()->subgroups($ldapRootGroupId, ["page" => ++$p, "per_page" => 100, "all_available" => true])) && [] !== $gitLabGroups) {
                 /** @var array<int, GitlabGroupArray> $gitLabGroups */
                 foreach ($gitLabGroups as $i => $gitLabGroup) {
                     $n = $i + 1;
@@ -2081,7 +2081,7 @@ class LdapSyncCommand extends Command
                 && !$config["gitlab"]["options"]["createEmptyGroups"]
             ) {
                 $this->logger?->warning(sprintf(
-                    "Not creating GitLab group \"%s\" [%s]: No members in directory group, or config gitlab->options->createEmptyGroups is disabled.",
+                    "Not creating GitLab group \"%s\" [%s]: No members in directory group, or config gitLab->options->createEmptyGroups is disabled.",
                     $gitLabGroupName,
                     $gitLabGroupPath
                 ));
@@ -2147,7 +2147,7 @@ class LdapSyncCommand extends Command
                 || !$config["gitlab"]["options"]["deleteExtraGroups"]
             ) {
                 $this->logger?->info(sprintf(
-                    "Not deleting GitLab group #%d \"%s\" [%s]: Has members in directory group, or config gitlab->options->deleteExtraGroups is disabled.",
+                    "Not deleting GitLab group #%d \"%s\" [%s]: Has members in directory group, or config gitLab->options->deleteExtraGroups is disabled.",
                     $gitLabGroupId,
                     $gitLabGroupName,
                     $gitLabGroupPath
