@@ -2100,7 +2100,7 @@ class LdapSyncCommand extends Command
                     $ldapRootGroupId = $gitLab->groups()->show($ldapRootGroup);
                 }
                 // TODO https://github.com/GitLabPHP/Client/blob/12.0/src/Api/Groups.php#L75 I don't want to add all of the other default options. I want to do something like this. create($gitLabGroupName, $gitLabGroupPath, "parent_id" = $ldapRootGroupId) ,but with the current code this doesn't work and I have to add all of the previous arguments aswell as defaults.
-                !$this->dryRun ? ($gitLabGroup = $gitLab->groups()->create($gitLabGroupName, $gitLabGroupPath, null, $config["gitLab"]["options"]["gitLabGroupVisibility"], null, null, $ldapRootGroupId)) : $this->logger?->warning("Operation skipped due to dry run.");
+                !$this->dryRun ? ($gitLabGroup = $gitLab->groups()->create($gitLabGroupName, $gitLabGroupPath, null, $config["gitlab"]["options"]["gitlabGroupVisibility"], null, null, $ldapRootGroupId)) : $this->logger?->warning("Operation skipped due to dry run.");
             }
 
             $gitLabGroupId = (is_array($gitLabGroup) && isset($gitLabGroup["id"]) && is_int($gitLabGroup["id"]))
