@@ -1930,7 +1930,7 @@ class LdapSyncCommand extends Command
             // Fetch ldapRootGroupId if it is not set.
             if (!isset($ldapRootGroupId) || $this->dryRun) {
                 $this->logger?->info(sprintf("Ldap Root Group variable has been set, but the ID of the group is null, searching for the ID of the group \"%s\"", $ldapRootGroup));
-                $gitlabGroupSearchResult = $gitlab->groups()->all(["top_level_only" => true, "search" => $ldapRootGroup]);
+                $gitlabGroupSearchResult = $gitLab->groups()->all(["top_level_only" => true, "search" => $ldapRootGroup]);
 
                 if (count($gitlabGroupSearchResult) > 0 ) {
                     $ldapRootGroupId = $gitlabGroupSearchResult[0]['id'];
@@ -2093,14 +2093,14 @@ class LdapSyncCommand extends Command
 
             /** @var GitlabGroupArray|null $gitlabUser */
             if (!isset($ldapRootGroup)) {
-                !$this->dryRun ? ($gitlabGroup = $gitlab->groups()->create($gitlabGroupName, $gitlabGroupPath)) : $this->logger?->warning("Operation skipped due to dry run.");
+                !$this->dryRun ? ($gitLabGroup = $gitLab->groups()->create($gitLabGroupName, $gitLabGroupPath)) : $this->logger?->warning("Operation skipped due to dry run.");
             } else {
                 // Fetch ldapRootGroupId if it is not set.
                 if (!isset($ldapRootGroupId)) {
-                    $ldapRootGroupId = $gitlab->groups()->show($ldapRootGroup);
+                    $ldapRootGroupId = $gitLab->groups()->show($ldapRootGroup);
                 }
-                // TODO https://github.com/GitLabPHP/Client/blob/12.0/src/Api/Groups.php#L75 I don't want to add all of the other default options. I want to do something like this. create($gitlabGroupName, $gitlabGroupPath, "parent_id" = $ldapRootGroupId) ,but with the current code this doesn't work and I have to add all of the previous arguments aswell as defaults.
-                !$this->dryRun ? ($gitlabGroup = $gitlab->groups()->create($gitlabGroupName, $gitlabGroupPath, null, $config["gitlab"]["options"]["gitlabGroupVisibility"], null, null, $ldapRootGroupId)) : $this->logger?->warning("Operation skipped due to dry run.");
+                // TODO https://github.com/GitLabPHP/Client/blob/12.0/src/Api/Groups.php#L75 I don't want to add all of the other default options. I want to do something like this. create($gitLabGroupName, $gitLabGroupPath, "parent_id" = $ldapRootGroupId) ,but with the current code this doesn't work and I have to add all of the previous arguments aswell as defaults.
+                !$this->dryRun ? ($gitLabGroup = $gitLab->groups()->create($gitLabGroupName, $gitLabGroupPath, null, $config["gitLab"]["options"]["gitLabGroupVisibility"], null, null, $ldapRootGroupId)) : $this->logger?->warning("Operation skipped due to dry run.");
             }
 
             $gitLabGroupId = (is_array($gitLabGroup) && isset($gitLabGroup["id"]) && is_int($gitLabGroup["id"]))
@@ -2249,7 +2249,7 @@ class LdapSyncCommand extends Command
             }
             $ldapGroupMembers = $ldapGroupsSafe[$gitLabGroupName];
 
-            !$this->dryRun ? ($gitlabGroup = $gitlab->groups()->update($gitlabGroupId, [
+            !$this->dryRun ? ($gitLabGroup = $gitLab->groups()->update($gitLabGroupId, [
                 "project_creation_level" => $config["gitlab"]["options"]["projectCreationLevel"],
                 "visibility" => $config["gitlab"]["options"]["gitlabGroupVisibility"]
             ])) : $this->logger->warning("Operation skipped due to dry run.");
@@ -2267,7 +2267,7 @@ class LdapSyncCommand extends Command
 
             $groupsSync["update"][$gitLabGroupId] = $gitLabGroupName;
 
-            $this->gitlabApiCoolDown();
+            $this->gitLabApiCoolDown();
         }
 
         asort($groupsSync["update"]);
