@@ -1910,17 +1910,17 @@ class LdapSyncCommand extends Command
         // Create ldapRootGroup group if variable is set.
         if (isset($ldapRootGroup)) {
             $this->logger?->notice(sprintf("Ldap Root Group variable has been set, searching if group is present. \"%s\"", $ldapRootGroup));
-            $gitlabGroupSearchResult = $gitlab->groups()->all(["top_level_only" => true, "search" => $ldapRootGroup]);
+            $gitlabGroupSearchResult = $gitLab->groups()->all(["top_level_only" => true, "search" => $ldapRootGroup]);
             $this->gitlabApiCoolDown();
             if (count($gitlabGroupSearchResult) <= 0 ) {
                 $this->logger?->notice(sprintf("Ldap Root Group variable has been set, but is not yet created, creating a group called \"%s\"", $ldapRootGroup));
-                $gitlabGroupName = $slugifyGitlabName->slugify($ldapRootGroup);
-                $gitlabGroupPath = $slugifyGitlabPath->slugify($ldapRootGroup);
-                $gitlabGroup = null;
-                !$this->dryRun ? ($gitlabGroup = $gitlab->groups()->create($gitlabGroupName, $gitlabGroupPath)) : $this->logger?->warning("Operation skipped due to dry run.");
-                $gitlabGroupId = (is_array($gitlabGroup) && isset($gitlabGroup["id"]) && is_int($gitlabGroup["id"])) ? $gitlabGroup["id"] : sprintf("dry:%s", $gitlabGroupPath);
-                $groupsSync["new"][$gitlabGroupId] = $gitlabGroupName;
-                $ldapRootGroupId = $gitlabGroupId;
+                $gitLabGroupName = $slugifyGitlabName->slugify($ldapRootGroup);
+                $gitLabGroupPath = $slugifyGitlabPath->slugify($ldapRootGroup);
+                $gitLabGroup = null;
+                !$this->dryRun ? ($gitLabGroup = $gitLab->groups()->create($gitLabGroupName, $gitLabGroupPath)) : $this->logger?->warning("Operation skipped due to dry run.");
+                $gitLabGroupId = (is_array($gitLabGroup) && isset($gitLabGroup["id"]) && is_int($gitLabGroup["id"])) ? $gitLabGroup["id"] : sprintf("dry:%s", $gitLabGroupPath);
+                $groupsSync["new"][$gitLabGroupId] = $gitLabGroupName;
+                $ldapRootGroupId = $gitLabGroupId;
                 $this->gitlabApiCoolDown();
             }
         }
@@ -1942,106 +1942,106 @@ class LdapSyncCommand extends Command
                 $this->gitlabApiCoolDown();
             }
             // Get the subgroups of the rootGroup
-            while (is_array($gitlabGroups = $gitlab->groups()->subgroups($ldapRootGroupId, ["page" => ++$p, "per_page" => 100, "all_available" => true])) && [] !== $gitlabGroups) {
-                /** @var array<int, GitlabGroupArray> $gitlabGroups */
-                foreach ($gitlabGroups as $i => $gitlabGroup) {
+            while (is_array($gitLabGroups = $gitlab->groups()->subgroups($ldapRootGroupId, ["page" => ++$p, "per_page" => 100, "all_available" => true])) && [] !== $gitLabGroups) {
+                /** @var array<int, GitlabGroupArray> $gitLabGroups */
+                foreach ($gitLabGroups as $i => $gitLabGroup) {
                     $n = $i + 1;
 
-                    if (!is_array($gitlabGroup)) {
+                    if (!is_array($gitLabGroup)) {
                         $this->logger?->error(sprintf("Group #%d: Not an array.", $n));
                         continue;
                     }
 
-                    if (!isset($gitlabGroup["id"])) {
+                    if (!isset($gitLabGroup["id"])) {
                         $this->logger?->error(sprintf("Group #%d: Missing ID.", $n));
                         continue;
                     }
 
-                    $gitlabGroupId = intval($gitlabGroup["id"]);
-                    if ($gitlabGroupId < 1) {
+                    $gitLabGroupId = intval($gitLabGroup["id"]);
+                    if ($gitLabGroupId < 1) {
                         $this->logger?->error(sprintf("Group #%d: Empty ID.", $n));
                         continue;
                     }
 
-                    if (!isset($gitlabGroup["name"])) {
+                    if (!isset($gitLabGroup["name"])) {
                         $this->logger?->error(sprintf("Group #%d: Missing name.", $n));
                         continue;
                     }
 
-                    if (!($gitlabGroupName = trim($gitlabGroup["name"]))) {
+                    if (!($gitLabGroupName = trim($gitLabGroup["name"]))) {
                         $this->logger?->error(sprintf("Group #%d: Empty name.", $n));
                         continue;
                     }
 
-                    if (!($gitlabGroupPath = trim($gitlabGroup["path"]))) {
+                    if (!($gitLabGroupPath = trim($gitLabGroup["path"]))) {
                         $this->logger?->error(sprintf("Group #%d: Empty path.", $n));
                         continue;
                     }
 
-                    $this->logger?->info(sprintf("Found Gitlab group #%d \"%s\" [%s].", $gitlabGroupId, $gitlabGroupName, $gitlabGroupPath));
-                    if (isset($groupsSync["found"][$gitlabGroupId]) || $this->in_array_i($gitlabGroupName, $groupsSync["found"])) {
-                        $this->logger?->warning(sprintf("Duplicate Gitlab group %d \"%s\" [%s].", $gitlabGroupId, $gitlabGroupName, $gitlabGroupPath));
+                    $this->logger?->info(sprintf("Found Gitlab group #%d \"%s\" [%s].", $gitLabGroupId, $gitLabGroupName, $gitLabGroupPath));
+                    if (isset($groupsSync["found"][$gitLabGroupId]) || $this->in_array_i($gitLabGroupName, $groupsSync["found"])) {
+                        $this->logger?->warning(sprintf("Duplicate Gitlab group %d \"%s\" [%s].", $gitLabGroupId, $gitLabGroupName, $gitLabGroupPath));
                         continue;
                     }
 
-                    $groupsSync["found"][$gitlabGroupId] = $gitlabGroupName;
+                    $groupsSync["found"][$gitLabGroupId] = $gitLabGroupName;
 
                 }
             }
         } else {
-            while (is_array($gitlabGroups = $gitlab->groups()->all(["page" => ++$p, "per_page" => 100, "all_available" => true])) && [] !== $gitlabGroups) {
-                /** @var array<int, GitlabGroupArray> $gitlabGroups */
-                foreach ($gitlabGroups as $i => $gitlabGroup) {
+            while (is_array($gitLabGroups = $gitLab->groups()->all(["page" => ++$p, "per_page" => 100, "all_available" => true])) && [] !== $gitLabGroups) {
+                /** @var array<int, GitlabGroupArray> $gitLabGroups */
+                foreach ($gitLabGroups as $i => $gitLabGroup) {
                     $n = $i + 1;
 
-                    if (!is_array($gitlabGroup)) {
+                    if (!is_array($gitLabGroup)) {
                         $this->logger?->error(sprintf("Group #%d: Not an array.", $n));
                         continue;
                     }
 
-                    if (!isset($gitlabGroup["id"])) {
+                    if (!isset($gitLabGroup["id"])) {
                         $this->logger?->error(sprintf("Group #%d: Missing ID.", $n));
                         continue;
                     }
 
-                    $gitlabGroupId = intval($gitlabGroup["id"]);
-                    if ($gitlabGroupId < 1) {
+                    $gitLabGroupId = intval($gitLabGroup["id"]);
+                    if ($gitLabGroupId < 1) {
                         $this->logger?->error(sprintf("Group #%d: Empty ID.", $n));
                         continue;
                     }
 
-                    if (!isset($gitlabGroup["name"])) {
+                    if (!isset($gitLabGroup["name"])) {
                         $this->logger?->error(sprintf("Group #%d: Missing name.", $n));
                         continue;
                     }
 
-                    if ("" === ($gitlabGroupName = trim($gitlabGroup["name"]))) {
+                    if ("" === ($gitLabGroupName = trim($gitLabGroup["name"]))) {
                         $this->logger?->error(sprintf("Group #%d: Empty name.", $n));
                         continue;
                     }
 
-                    if ("" === ($gitlabGroupPath = trim($gitlabGroup["path"]))) {
+                    if ("" === ($gitLabGroupPath = trim($gitLabGroup["path"]))) {
                         $this->logger?->error(sprintf("Group #%d: Empty path.", $n));
                         continue;
                     }
 
-                    if ($this->in_array_i($gitlabGroupName, self::getBuiltInGroups())) {
-                        $this->logger?->info(sprintf("Group \"%s\" in built-in ignore list.", $gitlabGroupName));
+                    if ($this->in_array_i($gitLabGroupName, self::getBuiltInGroups())) {
+                        $this->logger?->info(sprintf("Group \"%s\" in built-in ignore list.", $gitLabGroupName));
                         continue;
                     }
 
-                    if ($this->in_array_i($gitlabGroupName, self::getReservedGroups())) {
-                        $this->logger?->warning(sprintf("Group \"%s\" in built-in reserved list.", $gitlabGroupName));
+                    if ($this->in_array_i($gitLabGroupName, self::getReservedGroups())) {
+                        $this->logger?->warning(sprintf("Group \"%s\" in built-in reserved list.", $gitLabGroupName));
                         continue;
                     }
 
-                    $this->logger?->info(sprintf("Found Gitlab group #%d \"%s\" [%s].", $gitlabGroupId, $gitlabGroupName, $gitlabGroupPath));
-                    if (isset($groupsSync["found"][$gitlabGroupId]) || $this->in_array_i($gitlabGroupName, $groupsSync["found"])) {
-                        $this->logger?->warning(sprintf("Duplicate Gitlab group %d \"%s\" [%s].", $gitlabGroupId, $gitlabGroupName, $gitlabGroupPath));
+                    $this->logger?->info(sprintf("Found Gitlab group #%d \"%s\" [%s].", $gitLabGroupId, $gitLabGroupName, $gitLabGroupPath));
+                    if (isset($groupsSync["found"][$gitLabGroupId]) || $this->in_array_i($gitLabGroupName, $groupsSync["found"])) {
+                        $this->logger?->warning(sprintf("Duplicate Gitlab group %d \"%s\" [%s].", $gitLabGroupId, $gitLabGroupName, $gitLabGroupPath));
                         continue;
                     }
 
-                    $groupsSync["found"][$gitlabGroupId] = $gitlabGroupName;
+                    $groupsSync["found"][$gitLabGroupId] = $gitLabGroupName;
                 }
             }
         }
